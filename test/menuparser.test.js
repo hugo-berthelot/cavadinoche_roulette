@@ -93,3 +93,37 @@ test('la carte de demo est utilisable telle quelle', () => {
   assert.ok(DEMO_MENU.length >= 2);
   assert.deepEqual(parse(DEMO_MENU), DEMO_MENU);
 });
+
+test("nettoie le bruit d'OCR colle au prix", () => {
+  // Ligne relevee telle quelle en sortie de Tesseract sur une vraie carte :
+  // les points de conduite y sont devenus "Êä" juste avant le prix.
+  assert.deepEqual(parse(['Jus de pomme .….………….……….Êä3,50 EUR']), ['Jus de pomme']);
+});
+
+test('ne rogne pas un nom qui finit par un mot court legitime', () => {
+  assert.deepEqual(parse(['Thé', 'Eau', 'Gin', 'Vin de pays']), ['Thé', 'Eau', 'Gin', 'Vin de pays']);
+});
+
+test('cas realiste : sortie brute de Tesseract sur une carte photographiee', () => {
+  const brut = [
+    'CARTE DES BOISSONS', '', 'BIÈRES', '',
+    'Pinte de blonde 6,50 EUR', 'Demi de blonde 4,00 EUR',
+    'IPA artisanale 7,50 EUR', 'Bière ambrée 6,00 EUR',
+    'COCKTAILS', '', 'Mojito 9,00 EUR', 'Spritz 8,50 EUR',
+    'Gin tonic 2,50 EUR', 'Rhum arrangé 7,00 EUR',
+    'SANS ALCOOL', '', 'Coca-Cola 3,50 EUR',
+    'Limonade artisanale 4,00 EUR',
+    'Jus de pomme .….………….……….Êä3,50 EUR', '',
+    "L'abus d'alcool est dangereux pour la santé", '',
+  ];
+  assert.deepEqual(parse(brut), [
+    'Pinte de blonde', 'Demi de blonde', 'IPA artisanale', 'Bière ambrée',
+    'Mojito', 'Spritz', 'Gin tonic', 'Rhum arrangé',
+    'Coca-Cola', 'Limonade artisanale', 'Jus de pomme',
+  ]);
+});
+
+test('retire une devise restée seule en fin de ligne', () => {
+  // Arrive quand l'OCR juge le montant peu fiable et ne garde que "EUR".
+  assert.deepEqual(parse(['Spritz EUR', 'Pinte de blonde €', 'Mojito euros']), ['Spritz', 'Pinte de blonde', 'Mojito']);
+});

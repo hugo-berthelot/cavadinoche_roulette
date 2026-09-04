@@ -37,6 +37,9 @@ const PRICE_PATTERNS = [
   /\s*(?:€|EUR|euros?)\s*\d{1,3}(?:[.,]\d{1,2})?\s*$/i, // € 6,50
   /\s*\d{1,3}(?:[.,]\d{1,2})?\s*(?:€|EUR|euros?)\s*$/i,  // 6,50 €
   /\s*\d{1,3}[.,]\d{2}\s*$/,                             // 6,50
+  // Quand l'OCR ecarte le montant mais garde la devise, il reste un "EUR"
+  // orphelin en fin de ligne. Une devise seule n'est jamais un nom de boisson.
+  /\s*(?:€|EUR|euros?)\s*$/i,                             // "Spritz EUR"
 ];
 
 function stripAccents(value) {
@@ -62,7 +65,22 @@ function cleanLine(raw) {
     line = line.replace(/[\s\-–—:|]+$/, '').trim();
   } while (line !== previous);
 
-  return line;
+  return dropTrailingNoise(line);
+}
+
+// L'OCR transforme volontiers les points de conduite en caracteres fantaisistes
+// colles au prix : "Jus de pomme .….……….Êä3,50 EUR" laisse un "Êä" une fois le
+// prix retire. On enleve donc les fragments de fin qui ne ressemblent a rien :
+// tres courts, sans lettre latine de base ni chiffre. Le dernier mot restant
+// est toujours conserve, pour ne jamais vider une ligne par exces de zele.
+function dropTrailingNoise(line) {
+  const words = line.split(' ');
+  while (words.length > 1) {
+    const last = words[words.length - 1];
+    if (last.length <= 3 && !/[a-z0-9]/i.test(last)) words.pop();
+    else break;
+  }
+  return words.join(' ').trim();
 }
 
 function isPlausibleDrink(line) {
