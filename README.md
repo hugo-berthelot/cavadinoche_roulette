@@ -82,7 +82,8 @@ partie démarre quand même.
 ```bash
 npm test          # logique de jeu, sans dépendance (node --test)
 npm run serve     # sert le site sur http://localhost:8080
-npm run test:e2e  # parcours complet dans un vrai navigateur (npm i d'abord)
+npm run test:e2e     # parcours complet dans un vrai navigateur (npm i d'abord)
+npm run test:offline # vérifie qu'une partie se joue réseau coupé
 ```
 
-Le parcours navigateur écrit ses captures dans `screenshots/`.
+Les parcours navigateur écrivent leurs captures dans `screenshots/`.
