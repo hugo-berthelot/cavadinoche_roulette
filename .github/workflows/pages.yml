@@ -24,9 +24,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-        # Pages n'est pas encore active sur le depot : on laisse l'action le
-        # faire elle-meme (le job a deja la permission `pages: write`), plutot
-        # que d'exiger un reglage manuel dans Settings.
+        # `enablement` demande a l'action de creer le site Pages s'il n'existe
+        # pas. Le GITHUB_TOKEN n'y arrive pas seul : creer un site Pages exige
+        # des droits admin que `pages: write` ne donne pas (l'API repond
+        # "Resource not accessible by integration"). L'activation initiale se
+        # fait donc une fois a la main, dans Settings > Pages > Source :
+        # GitHub Actions. Le parametre reste utile ensuite : il rend le job
+        # idempotent si le site venait a etre supprime.
         with:
           enablement: true
       # Le site est deja statique : rien a construire, on publie le depot tel quel.

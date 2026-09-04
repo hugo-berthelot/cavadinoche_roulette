@@ -77,6 +77,16 @@ font l'essentiel du travail :
 Et surtout : l'écran de relecture reste éditable. Si la lecture échoue, la
 partie démarre quand même.
 
+## Mise en ligne
+
+Le workflow `.github/workflows/pages.yml` publie le dépôt tel quel sur GitHub
+Pages à chaque poussée sur `main` — il n'y a rien à construire.
+
+**Une seule action manuelle, la première fois :** activer Pages dans
+*Settings → Pages → Source : GitHub Actions*. Le jeton du workflow peut
+déployer sur un site Pages existant, mais pas en créer un : cela demande des
+droits d'administration qu'il n'a pas.
+
 ## Développement
 
 ```bash
