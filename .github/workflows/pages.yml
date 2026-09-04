@@ -24,6 +24,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+        # Pages n'est pas encore active sur le depot : on laisse l'action le
+        # faire elle-meme (le job a deja la permission `pages: write`), plutot
+        # que d'exiger un reglage manuel dans Settings.
+        with:
+          enablement: true
       # Le site est deja statique : rien a construire, on publie le depot tel quel.
       - uses: actions/upload-pages-artifact@v3
         with:

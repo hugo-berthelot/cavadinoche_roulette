@@ -48,12 +48,20 @@ export function rouletteScreen(s) {
 
   const keepButton = el('button', { class: 'subtle', text: 'Garder cette boisson', onclick: keep });
 
+  const backLink = fromGame
+    ? el('button', { class: 'link', text: 'Revenir au jeu sans changer', onclick: () => go('game') })
+    : null;
+
   const doSpin = () => {
     spinButton.disabled = true;
     keepButton.disabled = true;
     reel.classList.remove('reel--done');
     const result = spin(s.drinks);
     animate(reel, value, reelSequence(s.drinks, result), () => {
+      // Quitter l'ecran pendant le defilement ne doit pas changer la boisson :
+      // sinon "Revenir au jeu sans changer" ferait exactement le contraire de
+      // ce qu'il annonce, une fois l'animation terminee dans le vide.
+      if (state.screen !== 'roulette' || state.roulette !== s.roulette) return;
       commitLocally(result);
     });
   };
@@ -81,6 +89,6 @@ export function rouletteScreen(s) {
     ),
     el('div', { class: 'grow' }, reel),
     actions,
-    fromGame && el('button', { class: 'link', text: 'Revenir au jeu sans changer', onclick: () => go('game') }),
+    backLink,
   );
 }

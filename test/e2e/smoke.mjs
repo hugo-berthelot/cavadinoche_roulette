@@ -112,6 +112,19 @@ check('la manche ne repart pas de zéro', (await roundOf()) === before.round, be
 check("la boisson de Hugo n'a pas bougé", (await drinksOf())[0] === d1, d1);
 await shot('8-jeu-apres-retour');
 
+console.log('\n— Quitter la roulette en plein défilement —');
+const drinkBefore = (await drinksOf())[1];
+await page.locator('.player--p2 button.link').click();
+await page.waitForSelector('text=Camille, ta boisson');
+await page.locator('.screen > .stack > button.primary').click();
+// On repart au jeu pendant que la roulette tourne encore : la boisson ne doit
+// pas changer, sinon le lien ferait l'inverse de ce qu'il annonce.
+await page.waitForTimeout(200);
+await page.getByText('Revenir au jeu sans changer').click();
+await page.waitForSelector('.card');
+await page.waitForTimeout(2500); // laisse l'animation s'achever dans le vide
+check('un défilement abandonné ne change pas la boisson', (await drinksOf())[1] === drinkBefore, drinkBefore);
+
 console.log('\n— Partie longue (remélange du paquet) —');
 for (let i = 0; i < 55; i++) await (i % 3 === 0 ? lower : higher).click();
 check('le paquet se remélange sans casser', (await page.locator('.card').count()) === 1, await roundOf());

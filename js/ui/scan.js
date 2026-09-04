@@ -11,8 +11,16 @@ function toReview(drinks) {
 async function runOcr(file) {
   update({ ocr: { busy: true, progress: 0, error: null } });
   try {
+    // Tesseract rapporte sa progression plusieurs fois par seconde. Redessiner
+    // l'ecran a chaque tick ferait saccader la barre au lieu de l'animer : on ne
+    // remonte que les paliers d'un point de pourcentage.
+    let lastShown = -1;
     const text = await readMenu(file, (progress) => {
-      update({ ocr: { ...state.ocr, progress: Math.max(0, Math.min(1, progress || 0)) } });
+      const clamped = Math.max(0, Math.min(1, progress || 0));
+      const percent = Math.round(clamped * 100);
+      if (percent === lastShown) return;
+      lastShown = percent;
+      update({ ocr: { ...state.ocr, progress: clamped } });
     });
     const drinks = parseText(text);
     if (drinks.length === 0) {
