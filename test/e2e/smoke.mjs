@@ -71,6 +71,7 @@ console.log('\n— Higher / Lower —');
 await page.waitForSelector('.card');
 check('les deux boissons sont affichées', (await drinksOf()).join('|') === `${d1}|${d2}`);
 check('Hugo commence', (await turnOf()) === 'Hugo');
+await page.waitForTimeout(400);
 await shot('5-jeu-depart');
 
 const higher = page.locator('.guess button').first();
@@ -92,6 +93,7 @@ const sips = await sipsOf();
 const total = sips.reduce((sum, t) => sum + parseInt(t, 10), 0);
 check('les gorgées comptées correspondent aux erreurs', total >= 0 && total <= 13, `${sips.join(' | ')}`);
 check('13 manches jouées', (await roundOf()).includes('manche 14'), await roundOf());
+await page.waitForTimeout(400);
 await shot('6-jeu-en-cours');
 
 console.log('\n— Changement de boisson en pleine partie —');

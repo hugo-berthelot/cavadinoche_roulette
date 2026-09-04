@@ -33,12 +33,12 @@ function verdict(result, players) {
       el('div', { class: 'verdict__detail', text: 'Plus haute ou plus basse que celle affichée ?' }),
     );
   }
+  // Le verdict nomme toujours le joueur concerne : au moment ou il s'affiche,
+  // le telephone a deja change de mains et "tu" ne designerait plus personne.
   const who = players[result.player]?.name ?? 'Le joueur';
-  const title = result.correct
-    ? 'Bien vu !'
-    : result.tie ? 'Égalité — tu bois !' : 'Raté — tu bois !';
+  const title = result.correct ? 'Bien vu !' : result.tie ? 'Égalité — raté !' : 'Raté !';
   const detail = `${result.previous.label}${result.previous.symbol} → ${result.drawn.label}${result.drawn.symbol}`
-    + (result.correct ? '' : ` · ${who} boit une gorgée`);
+    + ` · ${who} ${result.correct ? 'passe' : 'boit une gorgée'}`;
 
   return el('div', { class: `verdict verdict--${result.correct ? 'ok' : 'wrong'}` },
     el('div', { class: 'verdict__title', text: title }),
@@ -66,7 +66,7 @@ export function gameScreen(s) {
 
   return el('div', { class: 'screen' },
     el('div', { class: 'players' }, players.map((p, i) => playerCard(p, i, i === turn))),
-    el('div', { class: 'grow stack' },
+    el('div', { class: 'grow' },
       cardNode(game.current),
       verdict(game.lastResult, players),
     ),
