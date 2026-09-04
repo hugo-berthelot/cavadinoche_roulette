@@ -1,0 +1,231 @@
+/* Cavadinoche -- pensé pour un téléphone tenu à une main, dans un bar sombre :
+   fond sombre, gros aplats tactiles, texte lisible de loin. */
+
+:root {
+  --bg: #12101a;
+  --bg-soft: #1c1929;
+  --surface: #241f36;
+  --surface-hi: #302947;
+  --line: #3d3557;
+  --text: #f4f1ff;
+  --muted: #a79fc4;
+  --accent: #ffb545;      /* joueur 1 */
+  --accent-2: #4fd1c5;    /* joueur 2 */
+  --danger: #ff6b8a;
+  --ok: #5ee6a8;
+  --radius: 20px;
+  --tap: 56px;            /* cible tactile minimale confortable */
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(120% 90% at 50% 0%, #241f36 0%, var(--bg) 60%);
+  background-attachment: fixed;
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overscroll-behavior: none;
+}
+
+#app {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: max(20px, env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- typographie ---------- */
+
+h1 { font-size: 1.9rem; margin: 0 0 4px; letter-spacing: -0.02em; }
+h2 { font-size: 1.35rem; margin: 0 0 16px; letter-spacing: -0.01em; }
+p  { margin: 0 0 16px; color: var(--muted); }
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.screen { display: flex; flex-direction: column; flex: 1; gap: 18px; }
+.screen > .grow { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- contrôles ---------- */
+
+button {
+  font: inherit;
+  font-weight: 650;
+  min-height: var(--tap);
+  padding: 14px 20px;
+  border: none;
+  border-radius: 16px;
+  background: var(--surface-hi);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+}
+button:active:not(:disabled) { transform: scale(.97); }
+button:disabled { opacity: .38; cursor: not-allowed; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.primary {
+  background: linear-gradient(135deg, var(--accent), #ff8f5a);
+  color: #2a1a05;
+  font-size: 1.05rem;
+}
+.ghost { background: transparent; border: 1.5px solid var(--line); color: var(--muted); }
+.subtle { background: var(--surface); }
+.link {
+  background: none; border: none; color: var(--muted);
+  text-decoration: underline; min-height: 44px; padding: 8px;
+  font-weight: 500; font-size: .92rem;
+}
+
+label { display: block; font-size: .82rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+
+input[type="text"], textarea {
+  width: 100%;
+  font: inherit;
+  min-height: var(--tap);
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  background: var(--bg-soft);
+  color: var(--text);
+}
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+textarea { min-height: 180px; resize: vertical; line-height: 1.6; }
+
+.field { margin-bottom: 16px; }
+.field--p1 input:focus { border-color: var(--accent); }
+.field--p2 input:focus { border-color: var(--accent-2); }
+
+/* ---------- roulette ---------- */
+
+.reel {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  padding: 40px 20px;
+  text-align: center;
+  min-height: 168px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reel__value {
+  font-size: 1.7rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.reel--spinning .reel__value { opacity: .55; filter: blur(.4px); }
+.reel--done { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(255,181,69,.12); }
+.reel--done .reel__value { animation: pop .35s ease; }
+@keyframes pop { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---------- carte à jouer ---------- */
+
+.card {
+  width: 148px;
+  height: 210px;
+  margin: 0 auto;
+  background: #fdfbf7;
+  color: #17121f;
+  border-radius: 16px;
+  box-shadow: 0 14px 32px rgba(0,0,0,.45);
+  display: grid;
+  place-items: center;
+  position: relative;
+  animation: deal .28s ease;
+}
+@keyframes deal { from { transform: translateY(-10px) rotate(-3deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.card--red { color: #cc2b4a; }
+.card__rank { font-size: 3.6rem; font-weight: 700; line-height: 1; }
+.card__suit { font-size: 2rem; line-height: 1; margin-top: 4px; }
+.card__corner { position: absolute; font-size: 1.05rem; font-weight: 700; }
+.card__corner--tl { top: 10px; left: 12px; }
+.card__corner--br { bottom: 10px; right: 12px; transform: rotate(180deg); }
+
+/* ---------- bandeau joueurs ---------- */
+
+.players { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.player {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.player--active { border-color: var(--accent); background: var(--surface-hi); }
+.player--p2.player--active { border-color: var(--accent-2); }
+.player__name {
+  font-weight: 700;
+  font-size: .95rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.player__drink { font-size: .8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player__sips { font-size: .8rem; color: var(--accent); font-weight: 650; }
+.player--p2 .player__sips { color: var(--accent-2); }
+
+/* ---------- verdict ---------- */
+
+.verdict { text-align: center; min-height: 74px; display: grid; place-content: center; gap: 4px; }
+.verdict__title { font-size: 1.15rem; font-weight: 750; }
+.verdict--ok    .verdict__title { color: var(--ok); }
+.verdict--wrong .verdict__title { color: var(--danger); }
+.verdict__detail { font-size: .85rem; color: var(--muted); }
+
+.turn { text-align: center; font-size: 1.05rem; }
+.turn strong { color: var(--accent); }
+.turn.turn--p2 strong { color: var(--accent-2); }
+
+.guess { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.guess button { min-height: 76px; font-size: 1.05rem; display: flex; flex-direction: column; gap: 2px; align-items: center; justify-content: center; }
+.guess__arrow { font-size: 1.1rem; opacity: .75; }
+
+/* ---------- liste de relecture ---------- */
+
+.drinks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.drink { display: flex; gap: 8px; align-items: center; }
+.drink input { flex: 1; min-height: 50px; }
+.drink button {
+  min-height: 50px; width: 50px; padding: 0; flex: none;
+  background: transparent; border: 1.5px solid var(--line); color: var(--muted); font-size: 1.2rem;
+}
+.count { font-size: .82rem; color: var(--muted); }
+
+/* ---------- divers ---------- */
+
+.progress { height: 8px; border-radius: 99px; background: var(--surface); overflow: hidden; }
+.progress > div { height: 100%; background: var(--accent); transition: width .2s ease; }
+
+.error {
+  background: rgba(255,107,138,.12);
+  border: 1.5px solid rgba(255,107,138,.4);
+  color: #ffc2ce;
+  border-radius: 14px; padding: 12px 14px; font-size: .9rem;
+}
+
+.hint { font-size: .82rem; color: var(--muted); text-align: center; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
