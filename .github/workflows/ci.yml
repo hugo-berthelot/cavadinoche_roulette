@@ -5,6 +5,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Moindre privilege explicite : ces tests n'ont besoin que de lire le code.
+# Sans cette declaration, le job herite du reglage du depot, qui peut donner
+# l'ecriture au jeton -- inutile ici, et c'est autant de surface en moins si
+# une dependance de workflow venait a etre compromise.
+permissions:
+  contents: read
+
 jobs:
   unit:
     name: Logique de jeu

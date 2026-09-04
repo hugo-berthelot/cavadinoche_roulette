@@ -97,3 +97,22 @@ npm run test:offline # vérifie qu'une partie se joue réseau coupé
 ```
 
 Les parcours navigateur écrivent leurs captures dans `screenshots/`.
+
+## Sécurité
+
+L'application est entièrement locale : **aucune donnée ne quitte l'appareil**.
+
+- Zéro requête réseau vers un tiers, à l'exécution comme au chargement. Vérifié
+  en bloquant toute sortie hors de l'origine du site : l'OCR lit quand même les
+  11 boissons d'une carte photographiée. La photo n'est jamais transmise.
+- Zéro backend, zéro compte, zéro traceur. Rien n'est conservé entre deux
+  sessions : ni `localStorage`, ni cookie, ni base locale.
+- Le DOM est construit par nœuds, jamais par concaténation de HTML. Aucun
+  `innerHTML`, `eval` ni `new Function` dans le code de l'application — ce qui
+  compte, puisque les noms de boissons viennent de l'OCR et de la saisie libre.
+- Tesseract est embarqué depuis npm, **identique bit pour bit** aux paquets
+  publiés (`tesseract.js` 7.0.0, `tesseract.js-core` 7.0.0,
+  `@tesseract.js-data/fra` 1.0.0). Le service worker ne met en cache que des
+  ressources de la même origine.
+- Les workflows appliquent le moindre privilège : lecture seule pour les tests,
+  et pour la publication uniquement ce que GitHub Pages exige.
