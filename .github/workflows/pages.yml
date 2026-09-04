@@ -2,7 +2,12 @@ name: Mise en ligne
 
 on:
   push:
-    branches: [main]
+    # La branche par defaut du depot est `claude/drinking-game-card-app-2kidki`
+    # (GitHub la fixe sur la premiere branche poussee dans un depot vide), et
+    # l'environnement github-pages n'autorise les deploiements que depuis la
+    # branche par defaut. On declenche donc sur les deux : le site se publie
+    # quelle que soit celle qui porte ce role.
+    branches: [main, claude/drinking-game-card-app-2kidki]
   workflow_dispatch:
 
 permissions:
